@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" content="text/html" http-equiv="Content-Type">
+    <meta content="width=280, user-scalable=no" name="viewport">
+    <title>KorinTrain</title>
+    <script src="jquery.min.js"></script>
+    <script src="socket.io.js"></script>
+    <script src="linda.js"></script>
+    <script>
+      var server_url = "http://linda-server.herokuapp.com";
+      // connect Socket.io & Linda
+      var socket = io.connect(server_url);
+      var linda = new Linda().connect(socket);
+      var ts = linda.tuplespace("korin");
+      linda.io.on("connect", function(){});
+      
+      function move_right(){
+        ts.write({type: "move", cmd: "right"});
+      }
+      function move_left(){
+        ts.write({type: "move", cmd: "left"});
+      }
+      function move_stop(){
+        ts.write({type: "move", cmd: "stop"});
+      }
+    </script>
+  </head>
+
+  <style>
+    button.button1 { font-size: 1.4em; font-weight: bold; padding: 10px 30px; }
+  </style>
+
+  <body>
+    <div id="content">
+      <div id="header">
+        <h1>降臨鉄道 KorinTrain</h1>
+      </div>
+      <div id="main">
+        <p>
+          <img src="http://192.168.1.9:8080/videofeed">
+        </p>
+        <p>
+          <button type="button" onclick="move_left()" class="button1"><-</button>
+          <button type="button" onclick="move_stop()" class="button1">STOP</button>
+          <button type="button" onclick="move_right()" class="button1">-></button>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

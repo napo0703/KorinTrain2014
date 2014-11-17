@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" content="text/html" http-equiv="Content-Type">
+    <meta content="width=280, user-scalable=no" name="viewport">
+    <title>KorinTrain for Android</title>
+    <script src="jquery.min.js"></script>
+    <script src="socket.io.js"></script>
+    <script src="linda.js"></script>
+    <script>
+      var server_url = "http://linda-server.herokuapp.com";
+      // connect Socket.io & Linda
+      var socket = io.connect(server_url);
+      var linda = new Linda().connect(socket);
+      var ts = linda.tuplespace("korin");
+      
+      linda.io.on("connect", function(){});
+      ts.watch({type: "move", cmd: "left"}, function(err, tuple){
+        if (right.paused == true && left.paused == true) {
+          play_left();
+        } else if (right.paused == false && left.paused == true){
+          play_stop();
+          setTimeout("play_left()", 500);
+        }
+      });
+      ts.watch({type: "move", cmd: "right"}, function(err, tuple){
+        if (right.paused == true && left.paused == true) {
+          play_right();
+        } else if (right.paused == true && left.paused == false){
+          play_stop();
+          setTimeout("play_right()", 500);
+        }
+      });
+      ts.watch({type: "move", cmd: "stop"}, function(err, tuple){
+        play_stop();
+      });
+      
+      function play_left() {
+        left.play();
+      }
+      
+      function play_right() {
+        right.play();
+      }
+      
+      function play_stop() {
+        if (right.paused == false) {
+          right.pause();
+          right.currentTime = 0;
+        }
+        if (left.paused == false) {
+          left.pause();
+          left.currentTime = 0;
+        }
+      }
+
+    </script>
+  </head>
+
+  <body>
+    <div id="content">
+      <div id="header">
+        <h1>KorinTrain for Android</h1>
+      </div>
+      <audio id="left" controls>
+        <source src="left.mp3">
+      </audio><br>
+      <audio id="right" controls>
+        <source src="right.mp3">
+      </audio><br>
+      <input type="button" value="left" onclick="play_left()">
+      <input type="button" value="stop" onclick="play_stop()">
+      <input type="button" value="right" onclick="play_right()">
+    </div>
+  </body>
+</html>
